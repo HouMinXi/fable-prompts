@@ -17,6 +17,84 @@ Content is only removed when there is concrete evidence:
 Every removal is documented inline as `<!-- REMOVED [TYPE]: reason -->`.
 Speculative removals ("this probably doesn't work") are not permitted.
 
+## Fable Prompt Characteristics
+
+`cc-anthropic.md` (1138 lines) has a distinctive structure and rule style that
+differs from typical system prompts. Understanding it helps when adapting to new
+backends.
+
+**Three-layer architecture**
+
+| Layer | Content | Lines (approx) |
+|-------|---------|----------------|
+| Behavior rules | Identity, refusal, tone, wellbeing, search, copyright | ~400 |
+| Tool definitions | Bash/Read/Write/Edit/WebSearch/WebFetch + full JSON schemas | ~500 |
+| Capability extensions | Skills system, memory system, artifact criteria | ~240 |
+
+**Key behavioral features**
+
+- **Hard copyright limits** -- 15-word per-quote ceiling and one-quote-per-source
+  max are marked `CRITICAL` / `NEVER`, not suggestions. The limits appear three
+  times in the prompt (rule, self-check, consequence reminder) to resist drift.
+
+- **User wellbeing guardrails** -- More detailed than most safety guidelines:
+  no clinical diagnosis, no self-harm substitution techniques, no eating-disorder
+  calorie guidance, no crisis-line confidentiality assurances. Each boundary has
+  a rationale sentence.
+
+- **Skills system** -- Any file creation or code task must be preceded by a
+  `Read` of the relevant SKILL.md. Framed as a "required first step" to resist
+  the model defaulting to training knowledge over environment-specific constraints.
+
+- **Memory system** -- File-based cross-session persistence at
+  `~/.claude/projects/<project>/memory/MEMORY.md`. Index always in context;
+  individual memory files loaded on demand.
+
+- **Search discipline** -- Explicit rules for when to search vs. not (binary
+  event checks, current role holders, unrecognized entity rule: must search).
+  Search result copyright limits match the inline copyright rules.
+
+- **Anti-formatting bias** -- Explicitly prohibits over-use of bullets, bold,
+  and headers. Bullets only when "(a) asked, or (b) content is multifaceted
+  enough." Conversational answers stay prose.
+
+- **Rule density** -- Behavior enforced with `NEVER` / `MUST` / `CRITICAL` /
+  `STOP` markers throughout, not phrased as preferences. ~40+ hard-stop markers
+  in the behavior section alone.
+
+## CN Model API Compatibility
+
+Research conducted June 2026 (Exa) on thinking/reasoning support across CN
+model backends used in cc-cn.md variants.
+
+| Model | API Format | Anthropic endpoint | thinking param | budget_tokens | reasoning output |
+|-------|-----------|-------------------|----------------|---------------|-----------------|
+| DeepSeek | OpenAI + Anthropic | `api.deepseek.com/anthropic` | `thinking.type` | **Ignored** | `reasoning_content` / `thinking` block |
+| Kimi (Moonshot) | OpenAI only | none | `thinking.type` + `thinking.keep` | N/A | `reasoning_content` |
+| GLM (Zhipu/Z.ai) | OpenAI + Anthropic | `api.z.ai/api/anthropic/v1` | `enable_thinking` | unknown | `reasoning_content` |
+| MiMo (Xiaomi) | OpenAI only | none | `thinking.type` | N/A | `reasoning_content` |
+
+**Key implications for proxies**
+
+- **DeepSeek** (Anthropic endpoint): `thinking` supported end-to-end;
+  `budget_tokens` silently ignored but model still reasons. `cache_control`
+  ignored. CC sending `budget_tokens: 31999` causes no errors.
+
+- **Kimi**: OpenAI-only. Proxy must translate CC's Anthropic `thinking` block
+  to Kimi's `{"thinking": {"type": "enabled"}}`. K2.6+ requires
+  `reasoning_content` preserved across turns for agent workflows -- dropping
+  it causes context degradation (not an immediate error, but quality drops).
+
+- **GLM**: Has Anthropic-compatible endpoint. Thinking mode uses a different
+  parameter format (`enable_thinking` for local; API behavior not fully
+  documented). Proxy should translate or strip `budget_tokens`.
+
+- **MiMo**: OpenAI-only. **Critical for multi-turn agents**: in conversations
+  containing tool calls, `reasoning_content` from the previous assistant message
+  **must** be included in the next request or the API returns 400. The current
+  cn-auth-proxy (pass-through only) does not handle this -- MiMo's dedicated
+  proxy must preserve `reasoning_content` in conversation history.
+
 ## Structure
 
 ```
