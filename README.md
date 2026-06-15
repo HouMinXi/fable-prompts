@@ -167,6 +167,28 @@ PYEOF
 **Note:** Route 1 covers both CLI and VSCode; Route 2 is VSCode-only.
 Use both together for maximum coverage (Copilot deduplicates identical content).
 
+**Updating (after cc-copilot.md changes):**
+
+Both routes read the file at runtime -- there is no copy to refresh manually.
+All you need is:
+
+```bash
+# On primary machine (fable-prompts is a submodule of mhou_workspace):
+cd ~/code/mhou_workspace
+git pull
+git submodule update --init --recursive
+
+# On macOS (standalone clone):
+cd ~/code/fable-prompts
+git pull
+```
+
+After pulling:
+- **Route 1 (symlink):** effective immediately on next Copilot session -- no
+  further action needed.
+- **Route 2 (settings.json file path):** VSCode re-reads the file per session,
+  but reload to be safe: `Cmd+Shift+P` -> `Developer: Reload Window`.
+
 ### agy / Gemini CLI (cc-agy.md)
 
 Injected via `~/GEMINI.md`. The GEMINI.md is built from two sources:
