@@ -1,0 +1,36 @@
+NOTICE
+
+This repository is licensed under the GNU Affero General Public License v3.0
+(AGPL-3.0). The AGPL-3.0 license applies only to original contributions made
+by the repository maintainer: adaptations, structural organization,
+commentary, and documentation.
+
+-------------------------------------------------------------------------------
+Upstream Content Attribution
+-------------------------------------------------------------------------------
+
+Files under upstream/ and portions derived from them in cc/ are extracted
+system prompts from commercial AI providers. These files are NOT original works
+of this repository's maintainer.
+
+  upstream/CLAUDE-FABLE-5.md
+    Copyright Anthropic PBC. All rights reserved.
+    Included for transparency and research purposes only.
+    Source: https://github.com/elder-plinius/CL4R1T4S (AGPL-3.0)
+
+The maintainer does not claim ownership or authorship of any AI provider's
+system prompt content. Inclusion of these files does not constitute a grant
+of rights to Anthropic's intellectual property beyond what applicable law
+(e.g., fair use / fair dealing) already provides.
+
+If you are an AI provider and wish to request removal of your content,
+please open an issue or contact the maintainer directly.
+
+-------------------------------------------------------------------------------
+Upstream Repository
+-------------------------------------------------------------------------------
+
+CL4R1T4S by elder-plinius
+  URL:     https://github.com/elder-plinius/CL4R1T4S
+  License: AGPL-3.0
+  Purpose: AI systems transparency and observability
