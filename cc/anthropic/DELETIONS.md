@@ -38,8 +38,9 @@ Tags:
 | product_information (~24L)               | [TRAINED]       | Anthropic product/billing/settings blurb for the claude.ai apps. The model can web-search docs.claude.com if asked. |
 | anthropic_reminders (~8L)                | [RESEARCHED]    | Reminders/classifiers are delivered only by Anthropic infra to claude.ai sessions, not via a CLI system prompt. |
 | legal_and_financial_advice (~4L)         | [TRAINED]       | The model already hedges legal/financial questions; a disclaimer line is not needed. |
+| user_wellbeing (~36L)                    | [TRAINED]       | Mental-health / self-harm / disordered-eating / crisis-resource handling. The model retains these dispositions from training; near-zero trigger on a private single-user CLI coding tool. Removed on a later explicit request; refusal_handling + harmful_content_safety remain. |
 
-Net: 1138 -> 450 lines, 94333 -> 46996 bytes (about 50% smaller).
+Net: 1138 -> 416 lines, 94333 -> 40265 bytes (about 57% smaller).
 
 ## [TESTED] evidence -- tool block not load-bearing (dual path, 2026-06-20)
 
@@ -58,9 +59,9 @@ prose block, on both backends. Removal is safe; a stronger model needs the prose
 
 ## NOT removed (deliberately kept)
 
-- Safety floor: refusal_handling, harmful_content_safety, user_wellbeing. user_wellbeing
-  was kept by default -- it is safety-adjacent and was not part of the request; cutting it
-  would be a separate safety-posture decision.
+- Safety floor: refusal_handling, harmful_content_safety. (user_wellbeing was cut on a
+  later explicit request -- see the removals table; the model's trained wellbeing
+  disposition remains, and refusal_handling + harmful_content_safety still cover the floor.)
 - Behavioral quality: tone_and_formatting + lists_and_bullets, evenhandedness,
   responding_to_mistakes_and_criticism, knowledge_cutoff, core_search_behaviors,
   search_usage_guidelines, critical_reminders (minus the one copyright bullet).
